@@ -1,1 +1,0 @@
-/home/greg/Documents/kotlin-script-sandbox/scripts/src/main/kotlin/world/gregs/script/script.kts
