@@ -2,10 +2,10 @@ package world.gregs.script
 
 import kotlin.script.experimental.annotations.KotlinScript
 
-@KotlinScript(compilationConfiguration = ScriptConfiguration::class)
+@KotlinScript(fileExtension = "kts", compilationConfiguration = ScriptConfiguration::class)
 abstract class ScriptBase {
 
     fun aMethod() {
-    }
 
+    }
 }

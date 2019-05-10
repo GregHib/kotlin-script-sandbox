@@ -1,31 +1,18 @@
 package world.gregs.script
 
-import java.io.File
-import kotlin.script.experimental.api.EvaluationResult
-import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
-import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
+import io.github.classgraph.ClassGraph
 
 object Main {
 
     @JvmStatic
     fun main(args: Array<String>) {
-
-        val file = File("src/main/testData/script.kts")
-
-        val eval = evalFile(file)
-
-        eval.reports.forEach {
-            println("${it.message} ${it.severity}")
-            it.exception?.printStackTrace()
+        ClassGraph().enableAllInfo().whitelistModules("scripts").scan().use { result ->
+            val plugins = result.getSubclasses(ScriptBase::class.java.name).directOnly()
+            plugins.forEach { p ->
+                val pluginClass = p.loadClass(ScriptBase::class.java)
+                val constructor = pluginClass.getConstructor()
+                constructor.newInstance()
+            }
         }
-    }
-
-    fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
-
-        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<ScriptBase>()
-
-        return BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), compilationConfiguration, null)
     }
 }
